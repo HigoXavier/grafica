@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Orçamentos Gráficos</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .summary-card {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .summary-details p {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .total-price {
+            margin-top: 20px;
+            padding-top: 12px;
+            border-top: 2px dashed var(--border-color);
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            text-align: center;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Sistema de Orçamentos - Gráfica Express</h1>
+        <p>Simulador técnico de custos para atendimento e produção</p>
+    </header>
+
+    <div class="content">
+        <form id="quoteForm">
+            <div class="form-group">
+                <label for="product">Produto Gráfico</label>
+                <select id="product" onchange="calculateQuote()">
+                    <option value="50">Cartão de Visita (9x5 cm)</option>
+                    <option value="120">Panfleto A5 (14x20 cm)</option>
+                    <option value="250">Banner Lona (100x70 cm)</option>
+                    <option value="80">Adesivo Vinil (A4)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="paper">Tipo de Papel / Material</label>
+                <select id="paper" onchange="calculateQuote()">
+                    <option value="1.0">Couché 90g / Lona Standard</option>
+                    <option value="1.2">Couché 150g (Brilho/Fosco)</option>
+                    <option value="1.5">Couché 300g (Alta Gramatura)</option>
+                    <option value="1.8">Vinil Impermeável / Lona Pesada</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="printType">Tipo de Impressão</label>
+                <select id="printType" onchange="calculateQuote()">
+                    <option value="1.0">Frente (4x0)</option>
+                    <option value="1.4">Frente e Verso (4x4)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="finishing">Acabamento</label>
+                <select id="finishing" onchange="calculateQuote()">
+                    <option value="0">Sem Acabamento Extra</option>
+                    <option value="15">Verniz UV Total (+ R$ 15,00)</option>
+                    <option value="30">Laminação Fosca + Canto Arredondado (+ R$ 30,00)</option>
+                    <option value="25">Bastão e Cordinha para Banner (+ R$ 25,00)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantidade (Unidades)</label>
+                <input type="number" id="quantity" value="100" min="10" step="10" oninput="calculateQuote()">
+            </div>
+        </form>
+
+        <div class="summary-card">
+            <div>
+                <h2>Resumo do Pedido</h2>
+                <div class="summary-details">
+                    <p><span>Produto:</span> <strong id="resProduct">-</strong></p>
+                    <p><span>Papel/Material:</span> <strong id="resPaper">-</strong></p>
+                    <p><span>Cores:</span> <strong id="resPrint">-</strong></p>
+                    <p><span>Acabamento:</span> <strong id="resFinishing">-</strong></p>
+                    <p><span>Quantidade:</span> <strong id="resQty">0 un</strong></p>
+                </div>
+            </div>
+
+            <div>
+                <div class="total-price">
+                    <span>Total:</span>
+                    <span id="resTotal">R$ 0,00</span>
+                </div>
+                <button class="btn" onclick="saveToLocalStorage()">Salvar Orçamento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateQuote() {
+        const productSelect = document.getElementById('product');
+        const paperSelect = document.getElementById('paper');
+        const printSelect = document.getElementById('printType');
+        const finishingSelect = document.getElementById('finishing');
+        const quantityInput = document.getElementById('quantity');
+
+        const basePrice = parseFloat(productSelect.value);
+        const paperMultiplier = parseFloat(paperSelect.value);
+        const printMultiplier = parseFloat(printSelect.value);
+        const finishingPrice = parseFloat(finishingSelect.value);
+        let quantity = parseInt(quantityInput.value) || 1;
+
+        if (quantity < 1) quantity = 1;
+
+        const scaleFactor = Math.max(0.6, 1 - Math.log10(quantity) * 0.12);
+        const unitBase = basePrice * paperMultiplier * printMultiplier * scaleFactor;
+        const total = (unitBase * (quantity / 100)) + finishingPrice;
+
+        document.getElementById('resProduct').innerText = productSelect.options[productSelect.selectedIndex].text;
+        document.getElementById('resPaper').innerText = paperSelect.options[paperSelect.selectedIndex].text;
+        document.getElementById('resPrint').innerText = printSelect.options[printSelect.selectedIndex].text;
+        document.getElementById('resFinishing').innerText = finishingSelect.options[finishingSelect.selectedIndex].text;
+        document.getElementById('resQty').innerText = `${quantity} un`;
+        document.getElementById('resTotal').innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function saveToLocalStorage() {
+        const quoteData = {
+            produto: document.getElementById('resProduct').innerText,
+            quantidade: document.getElementById('resQty').innerText,
+            total: document.getElementById('resTotal').innerText,
+            data: new Date().toLocaleString('pt-BR')
+        };
+
+        localStorage.setItem('ultimo_orcamento_grafica', JSON.stringify(quoteData));
+        alert('Orçamento salvo no histórico do navegador com sucesso!');
+    }
+
+    window.onload = calculateQuote;
+</script>
+
+</body>
+</html>
